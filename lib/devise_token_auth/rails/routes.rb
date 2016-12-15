@@ -58,8 +58,10 @@ module ActionDispatch::Routing
             match "#{full_path}/failure",             controller: omniauth_ctrl, action: "omniauth_failure", via: [:get]
             match "#{full_path}/:provider/callback",  controller: omniauth_ctrl, action: "omniauth_success", via: [:get]
 
-            match "#{DeviseTokenAuth.omniauth_prefix}/:provider/callback", controller: omniauth_ctrl, action: "redirect_callbacks", via: [:get, :post]
-            match "#{DeviseTokenAuth.omniauth_prefix}/failure", controller: omniauth_ctrl, action: "omniauth_failure", via: [:get, :post]
+            # match "#{DeviseTokenAuth.omniauth_prefix}/:provider/callback", controller: omniauth_ctrl, action: "redirect_callbacks", via: [:get, :post]
+            match "#{full_path}/:provider/callback", controller: omniauth_ctrl, action: "redirect_callbacks", via: [:get, :post]
+            # match "#{DeviseTokenAuth.omniauth_prefix}/failure", controller: omniauth_ctrl, action: "omniauth_failure", via: [:get, :post]
+            match "#{full_path}/failure", controller: omniauth_ctrl, action: "omniauth_failure", via: [:get, :post]
 
             # preserve the resource class thru oauth authentication by setting name of
             # resource as "resource_class" param
@@ -83,12 +85,14 @@ module ActionDispatch::Routing
                     redirect_url: redirect_url
                   )
                   redirect_params['message'] = message
-                  next "#{::OmniAuth.config.path_prefix}/failure?#{redirect_params.to_param}"
+                  # next "#{::OmniAuth.config.path_prefix}/failure?#{redirect_params.to_param}"
+                  next "#{full_path}/failure?#{redirect_params.to_param}"
                 end
               end
 
               # re-construct the path for omniauth
-              "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{redirect_params.to_param}"
+              # "#{::OmniAuth.config.path_prefix}/#{params[:provider]}?#{redirect_params.to_param}"
+              "#{full_path}/#{params[:provider]}?#{redirect_params.to_param}"
             }, via: [:get]
           end
         end

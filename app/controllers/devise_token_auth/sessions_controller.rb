@@ -10,15 +10,16 @@ module DeviseTokenAuth
 
     def create
       # Check
-      field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
+      # field = (resource_params.keys.map(&:to_sym) & resource_class.authentication_keys).first
+      field = :email
 
       @resource = nil
       if field
         q_value = resource_params[field]
 
-        if resource_class.case_insensitive_keys.include?(field)
-          q_value.downcase!
-        end
+        # if resource_class.case_insensitive_keys.include?(field)
+        #   q_value.downcase!
+        # end
 
         q = "#{field.to_s} = ? AND provider='email'"
 
